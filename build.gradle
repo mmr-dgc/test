@@ -1,0 +1,43 @@
+plugins {
+	id 'org.springframework.boot' version '2.4.5'
+	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+	id 'java'
+	id 'com.google.cloud.tools.jib' version '1.0.0'
+}
+
+group = 'com.example'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '11'
+targetCompatibility = '11'
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	
+	implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:2.1.4'
+	implementation 'com.google.cloud:google-cloud-spanner-jdbc:2.4.1'
+
+	
+	implementation 'com.google.cloud:libraries-bom:20.3.0'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
+
+test {
+	useJUnitPlatform()
+}
+
+jib {
+	to {
+		image = 'asia-northeast1-docker.pkg.dev/sampleproject20210401/sample-artifact-registry/springbootback'
+		auth {
+			username = '_json_key'
+			password = file('sampleproject20210401-180f931331ae.json').text
+		}
+	}
+	from {
+		image = 'adoptopenjdk/openjdk11:alpine-slim'
+	}
+}
