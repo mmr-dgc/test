@@ -31,10 +31,10 @@ test {
 
 jib {
 	to {
-		image = 'asia-northeast1-docker.pkg.dev/sampleproject20210401/sample-artifact-registry/springbootback'
+		image = 'asia-northeast1-docker.pkg.dev/tribal-mapper-326407/test/transaction'
 		auth {
 			username = '_json_key'
-			password = file('sampleproject20210401-180f931331ae.json').text
+			password = file('tribal-mapper-326407-1f22c2b343ff.json').text
 		}
 	}
 	from {

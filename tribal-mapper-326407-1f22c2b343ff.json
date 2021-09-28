@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "tribal-mapper-326407",
+  "private_key_id": "1f22c2b343ffde2cef4a3f6726a2c705a1da4457",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDSLnEic7NP6A4I\n+Pj7N4BKsS2SPMiQF3wUsl6yiusemH3PBkTezF07CMBr2c1V5zF06eppcdkqhrc0\nP2Tc4iEqxfIMC9l6YmP1qCvEJIi211NSWhu0WsKL12GCUUyJEZ2xwSIl9t9z/3m8\n3FDEOZJt/AJYl80AFKUy8iHR7uMhEhoJ0YjZJhjH8UkqduGmfYY8tjrkOp+kcy2o\nyGuKhU8ZY8AIMb5IZ6MHFmugRjS9FQMkeZpDSzv14/xz8MdkJhcLZ8Wf0MSNqItx\n46yt+wBV3u5TluWv6cF2h14tfMn+62wiKagpqYG7+qsdbFy4QvEui7RTq1qo900F\nRIJbK5gjAgMBAAECggEAZCvLMrrG2o4D5mXWsFA23iJMUFaU1gvDUM/kDx7jSP0v\ndLQNrcvjoSeeIai30rmxmgGD/YZLlJeJCCcwiI9jdFHL9s7M8yWic2mXlk89Mzsz\nlFuquY3KC8D2UZgyrF8Pc7DS+BoNTGkVmZu9CJBRyAZkDdonU2MDiuDYmofKiy8K\nq0x9kJ0Du0wgBBfRIaJ978JO3hqdoQsZM3E5g9TT56+XAVwGQwQEbnHvRcJDnbQt\nkGeFlbFFuXw2K0AjQC7s3C8JgjBOkidx0zhFX5iXWk/OXmVVgAnNx0WJkih4rvHd\nNvddlYarY0LQmVpcqyvlcNS3Ch0Ch84e2eL1F1gjWQKBgQDv7ncEOa/f6+1kDsjb\n/xFVwi5KmX973PUZAIGd0LxMBLefELdnF76Rg1xOtmPliuJm2C3Wr0ASTJZiwCxZ\nPlSvGcI2HNpiiKel+eGqS7ITZuBqbusPn4ziGqg7WDX1kpzIHFrWyOdOG0WLpgCt\n0xXmN8VGlo346lRnOBcJ9UVk2wKBgQDgQexHKv68rrEwox31P/3JrF+VkxHS008y\ne4OuJEg1fIdjaq55ihoPT2RiaRphMeVo292gFmtp9iIxWahBm5C46oNMqaD+gNRb\n7vCum+MZGEKVAUYadxkUiuLBg/m36N7fruiPshHW5eawlJ6Tk9RYFkqzsYy6cJ3i\nbcGp3fUYWQKBgA4jiVPwalLRvl2FGYUNVOIu3Td8MC0GalMc2oaIRHBeXsu62nPy\nzEIa8ZeZ2+0s8AaLergJ/8aUSNBs7rAbojXnWLCDpsLjtq1rOkckysul5lefTa7Q\nAidY1s0Yd6WPDDomoZvCnw7VQJXoJGYZ6FJ2uuNb/+XJOUwT3Be0InC9AoGBAMga\nSqieNrtJ7ZWGlz61INGJW6jtmCPUpYBYMgF7ImuHeI8/K/wLPIGYx+v/+Kfti9Rr\nC3DDUIk2NQBwDfCszRATQaFwYtV1QwfdRymms5c6zH6EqncG+nwYCYm/J13xDp3t\nRlqh+8UTUysREgaBDCKlkXaR4Q6jWl4mrX3TLdXRAoGADQbArEErCJq+KSXdKsKd\nBifaxlkvevjakQvVZzxiYIm4rVvFWOGvTm4dagz58+ifZrvWyrlaW5XqR2ejKtcF\n2q07TvHxouMJ0qJP61B89sq2+hH00zj7949fY0kzuQ1P9WdEBkbYzKiZNYp2RZGR\n6+LsyPzldn5ZDnEGrocN3FY=\n-----END PRIVATE KEY-----\n",
+  "client_email": "artifactregistory@tribal-mapper-326407.iam.gserviceaccount.com",
+  "client_id": "107764696493551395603",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/artifactregistory%40tribal-mapper-326407.iam.gserviceaccount.com"
+}
