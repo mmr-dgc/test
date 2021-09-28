@@ -59,18 +59,21 @@ public class SampleService {
 	@Transactional(rollbackFor=Exception.class)
 	public String test1() throws SQLTimeoutException {
 		getNext();
+		update(123);
 		throw new SQLTimeoutException();
 	}
 	
 	@Transactional(rollbackFor=Exception.class)
 	public String test2() {
 		getNext();
+		update(123);
 		throw new NoSuchElementException();
 	}
 	
 	@Transactional(rollbackFor=Exception.class)
 	public String test3() throws SQLException {
 		getNext();
+		update(123);
 		throw new SQLException();
 	}
 	
@@ -96,6 +99,7 @@ public class SampleService {
 	@Transactional(rollbackFor=Exception.class)
 	public String test6() {
 		getNext();
+		update(123);
 		error();
 		return "test6";
 	}
@@ -129,6 +133,12 @@ public class SampleService {
 		try (Connection connection = datasource.getConnection()) 
 		{			
 		  try (Statement statement = connection.createStatement()) {
+			try (ResultSet rs = statement.executeQuery("SELECT name, next_value FROM sequences WHERE name = \"my_seq\"")) {
+			  while (rs.next()) {
+			    temp = "Connected to Cloud Spanner at " + rs.getString(1) + rs.getString(2);
+			    System.out.println(temp);
+			  }
+			}
 			statement.execute("Update sequences SET next_value = 100 WHERE name = \"my_seq\"");
 			statement.execute("SET STATEMENT_TIMEOUT = '1ms'");
 		    try (ResultSet rs = statement.executeQuery("SHOW VARIABLE STATEMENT_TIMEOUT")) {
@@ -154,8 +164,14 @@ public class SampleService {
 		try (Connection connection = datasource.getConnection()) 
 		{			
 		  try (Statement statement = connection.createStatement()) {
+			try (ResultSet rs = statement.executeQuery("SELECT name, next_value FROM sequences WHERE name = \"my_seq\"")) {
+			  while (rs.next()) {
+			    temp = "Connected to Cloud Spanner at " + rs.getString(1) + rs.getString(2);
+			    System.out.println(temp);
+			  }
+			}
 			statement.execute("Update sequences SET next_value = 100 WHERE name = \"my_seq\"");
-			statement.execute("SET STATEMENT_TIMEOUT = '1s'");
+			statement.execute("SET STATEMENT_TIMEOUT = '100ms'");
 		    try (ResultSet rs = statement.executeQuery("SHOW VARIABLE STATEMENT_TIMEOUT")) {
 		      while (rs.next()) {
 		    	temp = "Connected to Cloud Spanner at " + rs.getString(1);
@@ -179,6 +195,14 @@ public class SampleService {
 		}
 		long value = sequenceEntity.getNext_value();
 		sequenceEntity.setNext_value(value + INCREMENT_BY);
+		repository.update(sequenceEntity);
+		return value;
+	}
+	
+	public long update(int value) {
+		SequenceEntity sequenceEntity = new SequenceEntity();
+		sequenceEntity.setName(SEQUENCE_NAME_COLUMN);
+		sequenceEntity.setNext_value(value);
 		repository.update(sequenceEntity);
 		return value;
 	}
