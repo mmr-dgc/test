@@ -122,7 +122,7 @@ public class SampleService {
 		throw new NoSuchElementException();
 	}
 	
-	@Transactional(propagation = Propagation.REQUIRES_NEW)
+	@Transactional(rollbackFor=Exception.class)
 	public String outer() {
 		getNext();
 		update(123);
