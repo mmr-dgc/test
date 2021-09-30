@@ -5,6 +5,7 @@ import java.util.NoSuchElementException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.demo.entity.SequenceEntity;
@@ -73,6 +74,12 @@ public class SampleService {
 	@Transactional(rollbackFor=Exception.class)
 	public String test3() throws SQLException {
 		getNext();
+		try {
+			Thread.sleep(5000);
+		} catch (InterruptedException e) {
+			// TODO 自動生成された catch ブロック
+			e.printStackTrace();
+		}
 		update(123);
 		throw new SQLException();
 	}
@@ -81,7 +88,7 @@ public class SampleService {
 	public String test4(){
 		getNext();
 		try {
-			Thread.sleep(3000);
+			Thread.sleep(5000);
 		} catch (InterruptedException e) {
 			// TODO 自動生成された catch ブロック
 			e.printStackTrace();
@@ -91,8 +98,8 @@ public class SampleService {
 	
 	@Transactional(rollbackFor=Exception.class)
 	public String test5(){
-		jdbcTemplate.execute("SET STATEMENT_TIMEOUT = '1ms'");
 		jdbcTemplate.setQueryTimeout(1);
+		jdbcTemplate.execute("Update sequences SET next_value = 789 WHERE name = \"my_seq\"");
 		return ""+jdbcTemplate.getQueryTimeout();
 	}
 	
@@ -102,6 +109,26 @@ public class SampleService {
 		update(123);
 		error();
 		return "test6";
+	}
+	
+	@Transactional(rollbackFor=Exception.class)
+	public String test7() {
+		getNext();
+		return "test7";
+	}
+	
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
+	public String inner() {
+		throw new NoSuchElementException();
+	}
+	
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
+	public String outer() {
+		getNext();
+		update(123);
+		inner();
+		update(456);
+		return "outer";
 	}
 	
 	public String set() throws SQLException {
@@ -147,11 +174,7 @@ public class SampleService {
 		        System.out.println(temp);
 		      }
 		    }
-		    Thread.sleep(1000);
 		    statement.execute("Update sequences SET next_value = 200 WHERE name = \"my_seq\"");
-		  } catch (InterruptedException e) {
-			// TODO 自動生成された catch ブロック
-			e.printStackTrace();
 		  }
 		}
 		return temp;
@@ -170,19 +193,35 @@ public class SampleService {
 			    System.out.println(temp);
 			  }
 			}
+			statement.setQueryTimeout(1);
 			statement.execute("Update sequences SET next_value = 100 WHERE name = \"my_seq\"");
-			statement.execute("SET STATEMENT_TIMEOUT = '100ms'");
 		    try (ResultSet rs = statement.executeQuery("SHOW VARIABLE STATEMENT_TIMEOUT")) {
 		      while (rs.next()) {
 		    	temp = "Connected to Cloud Spanner at " + rs.getString(1);
 		        System.out.println(temp);
 		      }
 		    }
-		    Thread.sleep(1000);
 		    statement.execute("Update sequences SET next_value = 200 WHERE name = \"my_seq\"");
-		  } catch (InterruptedException e) {
-			// TODO 自動生成された catch ブロック
-			e.printStackTrace();
+		  }
+		}
+		return temp;
+	}
+	
+	@Transactional(rollbackFor=Exception.class)
+	public String show3() throws SQLException {
+
+		String temp = "null";
+		try (Connection connection = datasource.getConnection()) 
+		{			
+		  try (Statement statement = connection.createStatement()) {
+			//statement.setQueryTimeout(1);
+			try (ResultSet rs = statement.executeQuery("SELECT name, next_value FROM sequences WHERE name = \"my_seq\"")) {
+			  while (rs.next()) {
+			    temp = "Connected to Cloud Spanner at " + rs.getString(1) + rs.getString(2);
+			    System.out.println(temp);
+			  }
+			}
+			statement.execute("Update sequences SET next_value = 789 WHERE name = \"my_seq\"");
 		  }
 		}
 		return temp;

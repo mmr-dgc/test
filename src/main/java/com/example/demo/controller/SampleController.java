@@ -79,6 +79,11 @@ public class SampleController {
 		return service.test6();
     }
 	
+	@GetMapping("/test7")
+    String test7() {
+		return service.test7();
+    }
+	
 	@GetMapping("/show")
     String show() {
 		try {
@@ -101,6 +106,17 @@ public class SampleController {
 		return "success";
     }
 	
+	@GetMapping("/show3")
+    String show3() {
+		try {
+			return service.show3();
+		} catch (SQLException e) {
+			// TODO 自動生成された catch ブロック
+			e.printStackTrace();
+		}
+		return "success";
+    }
+	
 	@GetMapping("/set")
     String set() {
 		try {
@@ -115,5 +131,10 @@ public class SampleController {
 	@GetMapping("/sync")
     String sync() {
 		return service.sync();
+    }
+	
+	@GetMapping("/outer")
+    String outer() {
+		return service.outer();
     }
 }
