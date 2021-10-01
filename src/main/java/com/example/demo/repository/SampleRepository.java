@@ -19,5 +19,9 @@ public class SampleRepository {
     public void update(SequenceEntity sequenceEntity) {
     	mapper.update(sequenceEntity);
     }
+    
+    public void insert(SequenceEntity sequenceEntity) {
+    	mapper.insert(sequenceEntity);
+    }
 
 }

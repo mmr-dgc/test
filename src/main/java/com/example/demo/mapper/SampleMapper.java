@@ -1,5 +1,6 @@
 package com.example.demo.mapper;
 
+import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
@@ -16,5 +17,8 @@ public interface SampleMapper {
 	
 	@Update("Update sequences SET next_value = #{next_value} WHERE name = #{name}")
     void update(SequenceEntity sequenceEntity);
+	
+	@Insert("Insert into sequences (name, next_value) values (#{name}, #{next_value})")
+    void insert(SequenceEntity sequenceEntity);
 
 }

@@ -42,6 +42,10 @@ public class SampleService {
 		repository.update(sequenceEntity);
     }
 	
+	public void insert(SequenceEntity sequenceEntity) {
+		repository.insert(sequenceEntity);
+    }
+	
 	@Transactional
 	public String sync() {
 		System.out.println(getNext());
@@ -214,7 +218,8 @@ public class SampleService {
 		try (Connection connection = datasource.getConnection()) 
 		{			
 		  try (Statement statement = connection.createStatement()) {
-			//statement.setQueryTimeout(1);
+			statement.execute("Insert into sequences (name, next_value) values (\"show3\", 1)");
+			statement.setQueryTimeout(1);
 			try (ResultSet rs = statement.executeQuery("SELECT name, next_value FROM sequences WHERE name = \"my_seq\"")) {
 			  while (rs.next()) {
 			    temp = "Connected to Cloud Spanner at " + rs.getString(1) + rs.getString(2);
@@ -222,6 +227,27 @@ public class SampleService {
 			  }
 			}
 			statement.execute("Update sequences SET next_value = 789 WHERE name = \"my_seq\"");
+		  }
+		}
+		return temp;
+	}
+	
+	@Transactional(rollbackFor=Exception.class)
+	public String show4() throws SQLException {
+
+		String temp = "null";
+		try (Connection connection = datasource.getConnection()) 
+		{			
+		  try (Statement statement = connection.createStatement()) {
+			statement.execute("Insert into sequences (name, next_value) values (\"show3\", 1)");
+			statement.setQueryTimeout(1);
+			try (ResultSet rs = statement.executeQuery("SELECT name, next_value FROM sequences WHERE name = \"my_seq\"")) {
+			  while (rs.next()) {
+			    temp = "Connected to Cloud Spanner at " + rs.getString(1) + rs.getString(2);
+			    System.out.println(temp);
+			  }
+			}
+			statement.execute("Insert into sequences (name, next_value) values (\"show3\", 1)");
 		  }
 		}
 		return temp;

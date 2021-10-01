@@ -31,6 +31,15 @@ public class SampleController {
         return "Success";
     }
 	
+	@GetMapping("/insert")
+    String insert() {
+		SequenceEntity sequenceEntity = new SequenceEntity();
+		sequenceEntity.setName("temp");
+		sequenceEntity.setNext_value(1);
+		service.insert(sequenceEntity);
+        return "Success";
+    }
+	
 	@GetMapping("/test1")
     String test1() {
 		try {
@@ -110,6 +119,17 @@ public class SampleController {
     String show3() {
 		try {
 			return service.show3();
+		} catch (SQLException e) {
+			// TODO 自動生成された catch ブロック
+			e.printStackTrace();
+		}
+		return "success";
+    }
+	
+	@GetMapping("/show4")
+    String show4() {
+		try {
+			return service.show4();
 		} catch (SQLException e) {
 			// TODO 自動生成された catch ブロック
 			e.printStackTrace();
