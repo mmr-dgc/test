@@ -2,6 +2,7 @@ package com.example.demo.service;
 
 import java.util.NoSuchElementException;
 
+import org.apache.http.client.ConnectionBackoffStrategy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
@@ -31,6 +32,9 @@ public class SampleService {
 	@Autowired
 	private HikariDataSource datasource;
 	
+	@Autowired
+	TempService tempservice;
+	
 	String SEQUENCE_NAME_COLUMN = "my_seq";
 	long INCREMENT_BY = 1;
 	
@@ -44,6 +48,62 @@ public class SampleService {
 	
 	public void insert(SequenceEntity sequenceEntity) {
 		repository.insert(sequenceEntity);
+    }
+	
+	@Transactional(rollbackFor=Exception.class)
+	public void insert2(SequenceEntity sequenceEntity) {
+		repository.insert(sequenceEntity);
+		getNext();
+		throw new NoSuchElementException();
+    }
+	
+	@Transactional(rollbackFor=Exception.class)
+	public void insert3(SequenceEntity sequenceEntity) {
+		String temp = "null";
+		try (Connection connection = datasource.getConnection()) 
+		{			
+		  try (Statement statement = connection.createStatement()) {
+			statement.execute("Insert into sequences (name, next_value) values (\"show3\", 1)");
+			try (ResultSet rs = statement.executeQuery("SELECT name, next_value FROM sequences WHERE name = \"my_seq\"")) {
+			  while (rs.next()) {
+			    temp = "Connected to Cloud Spanner at " + rs.getString(1) + rs.getString(2);
+			    System.out.println(temp);
+			  }
+			}
+		  } catch (SQLException e) {
+			// TODO 自動生成された catch ブロック
+			e.printStackTrace();
+		}
+		} catch (SQLException e1) {
+			// TODO 自動生成された catch ブロック
+			e1.printStackTrace();
+		}
+		throw new NoSuchElementException();
+    }
+	
+	@Transactional(rollbackFor=Exception.class)
+	public void insert4(SequenceEntity sequenceEntity) {
+		String temp = "null";
+		try (Connection connection = datasource.getConnection()) 
+		{
+		  connection.setAutoCommit(false);
+		  try (Statement statement = connection.createStatement()) {
+			statement.execute("Update sequences SET next_value = 200 WHERE name = \"my_seq\"");
+			try (ResultSet rs = statement.executeQuery("SELECT name, next_value FROM sequences WHERE name = \"my_seq\"")) {
+			  while (rs.next()) {
+			    temp = "Connected to Cloud Spanner at " + rs.getString(1) + rs.getString(2);
+			    System.out.println(temp);
+			  }
+			}
+		  } catch (SQLException e) {
+			// TODO 自動生成された catch ブロック
+			e.printStackTrace();
+		}
+		} catch (SQLException e1) {
+			// TODO 自動生成された catch ブロック
+			e1.printStackTrace();
+		}
+		throw new NoSuchElementException();
     }
 	
 	@Transactional
@@ -90,9 +150,13 @@ public class SampleService {
 	
 	@Transactional(rollbackFor=Exception.class)
 	public String test4(){
-		getNext();
+		//getNext();
+		repository.select(SEQUENCE_NAME_COLUMN);
 		try {
-			Thread.sleep(5000);
+			for(int i = 0; i < 5; i++) {
+				Thread.sleep(1000);
+				repository.select("temp" + String.valueOf(i));
+			}
 		} catch (InterruptedException e) {
 			// TODO 自動生成された catch ブロック
 			e.printStackTrace();
@@ -117,22 +181,31 @@ public class SampleService {
 	
 	@Transactional(rollbackFor=Exception.class)
 	public String test7() {
-		getNext();
+		tempservice.inner();
 		return "test7";
 	}
 	
 	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	public String inner() {
-		throw new NoSuchElementException();
+		//update(123);
+		getNext();
+		return "";
+		//throw new NoSuchElementException();
 	}
 	
 	@Transactional(rollbackFor=Exception.class)
 	public String outer() {
-		getNext();
 		update(123);
-		inner();
+		tempservice.inner();
+		try {
+			Thread.sleep(5000);
+		} catch (InterruptedException e) {
+			// TODO 自動生成された catch ブロック
+			e.printStackTrace();
+		}
 		update(456);
-		return "outer";
+		throw new NoSuchElementException();
+		//return "outer";
 	}
 	
 	public String set() throws SQLException {
@@ -158,26 +231,15 @@ public class SampleService {
 	}
 	
 	@Transactional(rollbackFor=Exception.class)
-	public String show() throws SQLException {
+	public String spannerQUeryTimeout() throws SQLException {
 
 		String temp = "null";
 		try (Connection connection = datasource.getConnection()) 
-		{			
+		{
+		  connection.setAutoCommit(false);
 		  try (Statement statement = connection.createStatement()) {
-			try (ResultSet rs = statement.executeQuery("SELECT name, next_value FROM sequences WHERE name = \"my_seq\"")) {
-			  while (rs.next()) {
-			    temp = "Connected to Cloud Spanner at " + rs.getString(1) + rs.getString(2);
-			    System.out.println(temp);
-			  }
-			}
-			statement.execute("Update sequences SET next_value = 100 WHERE name = \"my_seq\"");
+			statement.execute("Insert into sequences (name, next_value) values (\"spannerTimeout\", 1)");
 			statement.execute("SET STATEMENT_TIMEOUT = '1ms'");
-		    try (ResultSet rs = statement.executeQuery("SHOW VARIABLE STATEMENT_TIMEOUT")) {
-		      while (rs.next()) {
-		    	temp = "Connected to Cloud Spanner at " + rs.getString(1);
-		        System.out.println(temp);
-		      }
-		    }
 		    statement.execute("Update sequences SET next_value = 200 WHERE name = \"my_seq\"");
 		  }
 		}
@@ -216,10 +278,11 @@ public class SampleService {
 
 		String temp = "null";
 		try (Connection connection = datasource.getConnection()) 
-		{			
+		{
+		  connection.setAutoCommit(false);
 		  try (Statement statement = connection.createStatement()) {
-			statement.execute("Insert into sequences (name, next_value) values (\"show3\", 1)");
 			statement.setQueryTimeout(1);
+			statement.execute("Insert into sequences (name, next_value) values (\"show3\", 1)");
 			try (ResultSet rs = statement.executeQuery("SELECT name, next_value FROM sequences WHERE name = \"my_seq\"")) {
 			  while (rs.next()) {
 			    temp = "Connected to Cloud Spanner at " + rs.getString(1) + rs.getString(2);
@@ -237,7 +300,51 @@ public class SampleService {
 
 		String temp = "null";
 		try (Connection connection = datasource.getConnection()) 
-		{			
+		{
+		  connection.setAutoCommit(false);
+		  try (Statement statement = connection.createStatement()) {
+			statement.setQueryTimeout(1);
+			statement.execute("Insert into sequences (name, next_value) values (\"show3\", 1)");
+			try (ResultSet rs = statement.executeQuery("SELECT name, next_value FROM sequences WHERE name = \"my_seq\"")) {
+			  while (rs.next()) {
+			    temp = "Connected to Cloud Spanner at " + rs.getString(1) + rs.getString(2);
+			    System.out.println(temp);
+			  }
+			}
+			statement.execute("Insert into sequences (name, next_value) values (\"show3\", 1)");
+		  }
+		}
+		return temp;
+	}
+	
+	@Transactional(rollbackFor=Exception.class)
+	public String show5() throws SQLException {
+
+		String temp = "null";
+		try (Connection connection = datasource.getConnection()) 
+		{
+		  try (Statement statement = connection.createStatement()) {
+			statement.execute("Insert into sequences (name, next_value) values (\"show3\", 1)");
+			statement.setQueryTimeout(5);
+			try (ResultSet rs = statement.executeQuery("SELECT name, next_value FROM sequences WHERE name = \"my_seq\"")) {
+			  while (rs.next()) {
+			    temp = "Connected to Cloud Spanner at " + rs.getString(1) + rs.getString(2);
+			    System.out.println(temp);
+			  }
+			}
+			statement.execute("Update sequences SET next_value = 789 WHERE name = \"my_seq\"");
+		  }
+		}
+		return temp;
+	}
+	
+	@Transactional(rollbackFor=Exception.class)
+	public String show6() throws SQLException {
+
+		String temp = "null";
+		try (Connection connection = datasource.getConnection()) 
+		{
+		  connection.setAutoCommit(false);
 		  try (Statement statement = connection.createStatement()) {
 			statement.execute("Insert into sequences (name, next_value) values (\"show3\", 1)");
 			statement.setQueryTimeout(1);
@@ -247,7 +354,58 @@ public class SampleService {
 			    System.out.println(temp);
 			  }
 			}
+			statement.execute("Update sequences SET next_value = 789 WHERE name = \"my_seq\"");
+		  }
+		  connection.commit();
+		}
+		return temp;
+	}
+	
+	@Transactional(rollbackFor=Exception.class)
+	public String show7() throws SQLException {
+
+		String temp = "null";
+		try (Connection connection = datasource.getConnection()) 
+		{
+		  try (Statement statement = connection.createStatement()) {
+			statement.setQueryTimeout(1);
 			statement.execute("Insert into sequences (name, next_value) values (\"show3\", 1)");
+			try (ResultSet rs = statement.executeQuery("SELECT name, next_value FROM sequences WHERE name = \"my_seq\"")) {
+			  while (rs.next()) {
+			    temp = "Connected to Cloud Spanner at " + rs.getString(1) + rs.getString(2);
+			    System.out.println(temp);
+			  }
+			}
+			statement.execute("Update sequences SET next_value = 789 WHERE name = \"my_seq\"");
+		  }
+		}
+		return temp;
+	}
+	
+	@Transactional(rollbackFor=Exception.class)
+	public String show8() throws SQLException {
+
+		String temp = "null";
+		try (Connection connection = datasource.getConnection()) 
+		{
+		  try (Statement statement = connection.createStatement()) {
+			statement.setQueryTimeout(1);
+			statement.execute("Update sequences SET next_value = 789 WHERE name = \"my_seq\"");
+		  }
+		}
+		return temp;
+	}
+	
+	@Transactional(rollbackFor=Exception.class)
+	public String show9() throws SQLException {
+
+		String temp = "null";
+		try (Connection connection = datasource.getConnection()) 
+		{
+		  connection.setAutoCommit(false);
+		  try (Statement statement = connection.createStatement()) {
+			statement.setQueryTimeout(1);
+			statement.execute("Update sequences SET next_value = 789 WHERE name = \"my_seq\"");
 		  }
 		}
 		return temp;

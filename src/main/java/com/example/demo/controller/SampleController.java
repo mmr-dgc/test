@@ -40,6 +40,33 @@ public class SampleController {
         return "Success";
     }
 	
+	@GetMapping("/insert2")
+    String insert2() {
+		SequenceEntity sequenceEntity = new SequenceEntity();
+		sequenceEntity.setName("temp2");
+		sequenceEntity.setNext_value(1);
+		service.insert2(sequenceEntity);
+        return "Success";
+    }
+	
+	@GetMapping("/insert3")
+    String insert3() {
+		SequenceEntity sequenceEntity = new SequenceEntity();
+		sequenceEntity.setName("temp2");
+		sequenceEntity.setNext_value(1);
+		service.insert3(sequenceEntity);
+        return "Success";
+    }
+	
+	@GetMapping("/insert4")
+    String insert4() {
+		SequenceEntity sequenceEntity = new SequenceEntity();
+		sequenceEntity.setName("temp2");
+		sequenceEntity.setNext_value(1);
+		service.insert4(sequenceEntity);
+        return "Success";
+    }
+	
 	@GetMapping("/test1")
     String test1() {
 		try {
@@ -96,7 +123,7 @@ public class SampleController {
 	@GetMapping("/show")
     String show() {
 		try {
-			return service.show();
+			return service.spannerQUeryTimeout();
 		} catch (SQLException e) {
 			// TODO 自動生成された catch ブロック
 			e.printStackTrace();
@@ -130,6 +157,61 @@ public class SampleController {
     String show4() {
 		try {
 			return service.show4();
+		} catch (SQLException e) {
+			// TODO 自動生成された catch ブロック
+			e.printStackTrace();
+		}
+		return "success";
+    }
+	
+	@GetMapping("/show5")
+    String show5() {
+		try {
+			return service.show5();
+		} catch (SQLException e) {
+			// TODO 自動生成された catch ブロック
+			e.printStackTrace();
+		}
+		return "success";
+    }
+	
+	@GetMapping("/show6")
+    String show6() {
+		try {
+			return service.show6();
+		} catch (SQLException e) {
+			// TODO 自動生成された catch ブロック
+			e.printStackTrace();
+		}
+		return "success";
+    }
+	
+	@GetMapping("/show7")
+    String show7() {
+		try {
+			return service.show7();
+		} catch (SQLException e) {
+			// TODO 自動生成された catch ブロック
+			e.printStackTrace();
+		}
+		return "success";
+    }
+	
+	@GetMapping("/show8")
+    String show8() {
+		try {
+			return service.show8();
+		} catch (SQLException e) {
+			// TODO 自動生成された catch ブロック
+			e.printStackTrace();
+		}
+		return "success";
+    }
+	
+	@GetMapping("/show9")
+    String show9() {
+		try {
+			return service.show9();
 		} catch (SQLException e) {
 			// TODO 自動生成された catch ブロック
 			e.printStackTrace();
