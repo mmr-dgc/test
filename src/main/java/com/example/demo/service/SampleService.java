@@ -123,9 +123,10 @@ public class SampleService {
 	
 	@Transactional(rollbackFor=Exception.class)
 	public String test1() throws SQLTimeoutException {
-		getNext();
+		//getNext();
 		update(123);
-		throw new SQLTimeoutException();
+		return "";
+		//throw new SQLTimeoutException();
 	}
 	
 	@Transactional(rollbackFor=Exception.class)
@@ -355,8 +356,8 @@ public class SampleService {
 			  }
 			}
 			statement.execute("Update sequences SET next_value = 789 WHERE name = \"my_seq\"");
+			connection.commit();
 		  }
-		  connection.commit();
 		}
 		return temp;
 	}

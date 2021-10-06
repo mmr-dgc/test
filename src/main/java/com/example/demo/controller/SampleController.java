@@ -126,7 +126,8 @@ public class SampleController {
 			return service.spannerQUeryTimeout();
 		} catch (SQLException e) {
 			// TODO 自動生成された catch ブロック
-			e.printStackTrace();
+			System.out.println("SQLState : "+e.getSQLState());
+			System.out.println("ErrorCode : "+e.getErrorCode());
 		}
 		return "success";
     }
