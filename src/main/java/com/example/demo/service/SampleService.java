@@ -47,7 +47,10 @@ public class SampleService {
     }
 	
 	public void insert(SequenceEntity sequenceEntity) {
-		repository.insert(sequenceEntity);
+		for(int i=1000; i<10000; i++) {
+			sequenceEntity.setName("test_" + String.valueOf(i));
+			repository.insert(sequenceEntity);
+		}
     }
 	
 	@Transactional(rollbackFor=Exception.class)
@@ -326,7 +329,7 @@ public class SampleService {
 		{
 		  try (Statement statement = connection.createStatement()) {
 			statement.execute("Insert into sequences (name, next_value) values (\"show3\", 1)");
-			statement.setQueryTimeout(5);
+			statement.setQueryTimeout(1);
 			try (ResultSet rs = statement.executeQuery("SELECT name, next_value FROM sequences WHERE name = \"my_seq\"")) {
 			  while (rs.next()) {
 			    temp = "Connected to Cloud Spanner at " + rs.getString(1) + rs.getString(2);
@@ -348,16 +351,16 @@ public class SampleService {
 		  connection.setAutoCommit(false);
 		  try (Statement statement = connection.createStatement()) {
 			statement.execute("Insert into sequences (name, next_value) values (\"show3\", 1)");
-			statement.setQueryTimeout(1);
 			try (ResultSet rs = statement.executeQuery("SELECT name, next_value FROM sequences WHERE name = \"my_seq\"")) {
 			  while (rs.next()) {
 			    temp = "Connected to Cloud Spanner at " + rs.getString(1) + rs.getString(2);
 			    System.out.println(temp);
 			  }
 			}
+			statement.setQueryTimeout(1);
 			statement.execute("Update sequences SET next_value = 789 WHERE name = \"my_seq\"");
-			connection.commit();
 		  }
+		  connection.commit();
 		}
 		return temp;
 	}
@@ -370,13 +373,13 @@ public class SampleService {
 		{
 		  try (Statement statement = connection.createStatement()) {
 			statement.setQueryTimeout(1);
-			statement.execute("Insert into sequences (name, next_value) values (\"show3\", 1)");
-			try (ResultSet rs = statement.executeQuery("SELECT name, next_value FROM sequences WHERE name = \"my_seq\"")) {
-			  while (rs.next()) {
-			    temp = "Connected to Cloud Spanner at " + rs.getString(1) + rs.getString(2);
-			    System.out.println(temp);
-			  }
-			}
+//			statement.execute("Insert into sequences (name, next_value) values (\"show3\", 1)");
+//			try (ResultSet rs = statement.executeQuery("SELECT name, next_value FROM sequences WHERE name = \"my_seq\"")) {
+//			  while (rs.next()) {
+//			    temp = "Connected to Cloud Spanner at " + rs.getString(1) + rs.getString(2);
+//			    System.out.println(temp);
+//			  }
+//			}
 			statement.execute("Update sequences SET next_value = 789 WHERE name = \"my_seq\"");
 		  }
 		}
